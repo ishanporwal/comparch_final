@@ -14,7 +14,7 @@
 // - I-Type:    LB, LH, LW, LBU, LHU -> Load Instructions
 // - S-Type:    SB, SH, SW
 // - B-Type:    BEQ, BNE, BLT, BGE, BLTU, BGEU
-// - R-Type:    ADD, SUB, SLL, SLT, SLTU, XOR, SRL, SRA, OR, AND
+// - R-Type:    ADD, SUB, SLL, SLT, SLTU, XOR, SRL, SRA, OR, AND, MUL, MULH, MULHU, MULHSU, DIV, DIVU, REM, REMU
 //
 // File Contributor(s): Nividh Singh, Ahan Trivedi
 //-----------------------------------------------------------------------------
@@ -54,7 +54,7 @@ module instruction_decode(
         case (opcode)
             // -----------------------
             // R-Type: Arithmetic/Logic
-            // ADD, SUB, SLL, SLT, SLTU, XOR, SRL, SRA, OR, AND
+            // ADD, SUB, SLL, SLT, SLTU, XOR, SRL, SRA, OR, AND, MUL, MULH, MULHU, MULHSU, DIV, DIVU, REM, REMU
             // opcode: 0110011
             // -----------------------
             7'b0110011: begin
