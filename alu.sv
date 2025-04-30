@@ -49,20 +49,43 @@ module alu(
                 product = ($signed(operand_a) * $unsigned(operand_b));
                 result = product[63:32];
             end
-            5'b01101: begin                             // MULHU
+            5'b01110: begin                             // MULHU
                 logic [63:0] product;
                 product = ($unsigned(operand_a) * $unsigned(operand_b));
                 result = product[63:32];
             end
             5'b01111: begin                             // DIV
-                if operand_b != 32'b0 begin
-                    
+                if operand_b == 32'd0 begin
+                    result = -32'sd1;
                 end
-                
+                else begin
+                    result = $signed(operand_a) / $signed(operand_b);
+                end 
             end
-            5'b10000: result = operand_a * operand_b;   // DIVU
-            5'b10001: result = operand_a * operand_b;   // REM
-            5'b10010: result = operand_a * operand_b;   // REMU
+            5'b10000: begin                             // DIVU
+                if operand_b == 32'd0 begin
+                    result = 32'hFFFFFFFF;
+                end
+                else begin
+                    result = $unsigned(operand_a) / $unsigned(operand_b);
+                end 
+            end
+            5'b10001: begin                             // REM
+                if operand_b == 32'd0 begin
+                    result = operand_a;
+                end
+                else begin
+                    result = $signed(operand_a) % $signed(operand_b);
+                end 
+            end
+            5'b10010: begin                             // REMU
+                if operand_b == 32'd0 begin
+                    result = operand_a;
+                end
+                else begin
+                    result = $unsigned(operand_a) % $unsigned(operand_b);
+                end 
+            end
             default: result = 32'b0;  // Default case
         endcase
     end
