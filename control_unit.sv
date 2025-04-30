@@ -39,7 +39,7 @@ module control_unit (
 
     output logic [3:0] pc_control, // Control Signal for Program Counter
     output logic [1:0] ir_control, // Control Signal for Instruction Register
-    output logic [3:0] alu_control, // Control Signal for ALU
+    output logic [4:0] alu_control, // Control Signal for ALU
 
     output logic register_write_en, // Enable for Write in Register File
     output logic memory_write_en,
@@ -79,7 +79,7 @@ module control_unit (
         pc_control = 4'b0000;
         ir_control = 2'b00;
         memory_funct3 = 3'b010;
-        alu_control = 4'b0000;
+        alu_control = 5'b00000;
         register_write_en = 1'b0;
         memory_write_en = 1'b0;
         memory_write = 32'b0;
@@ -93,7 +93,7 @@ module control_unit (
             PC_UPDATE: begin
                 pc_control           = 4'b0100;
                 ir_control           = 2'b00;
-                alu_control          = 4'b0000;
+                alu_control          = 5'b00000;
 
                 register_write_en    = 1'b0;
                 memory_write_en      = 1'b0;
@@ -110,7 +110,7 @@ module control_unit (
             MEMORY_PULL: begin
                 pc_control           = 4'b0000;
                 ir_control           = 2'b00;
-                alu_control          = 4'b0000;
+                alu_control          = 5'b00000;
 
                 register_write_en    = 1'b0;
                 memory_write_en      = 1'b0;
@@ -127,7 +127,7 @@ module control_unit (
             FETCH: begin
                 pc_control = 4'b0000;
                 ir_control = 2'b01;
-                alu_control = 4'b0000;
+                alu_control = 5'b00000;
 
                 register_write_en = 1'b0;
                 memory_write_en = 1'b0;
@@ -160,22 +160,33 @@ module control_unit (
 
                         if (funct7 == 7'b0000000) begin
                             case(funct3)
-                                3'b000: alu_control = 4'b0000; // ADD
-                                3'b100: alu_control = 4'b0100; // XOR
-                                3'b110: alu_control = 4'b0011; // OR
-                                3'b111: alu_control = 4'b0010; // AND
-                                3'b001: alu_control = 4'b0111; // SLL
-                                3'b101: alu_control = 4'b1000; // SRL
-                                3'b010: alu_control = 4'b0101; // SLT
-                                3'b011: alu_control = 4'b0110; // SLTU
+                                3'b000: alu_control = 5'b00000; // ADD
+                                3'b100: alu_control = 5'b00100; // XOR
+                                3'b110: alu_control = 5'b00011; // OR
+                                3'b111: alu_control = 5'b00010; // AND
+                                3'b001: alu_control = 5'b00111; // SLL
+                                3'b101: alu_control = 5'b01000; // SRL
+                                3'b010: alu_control = 5'b00101; // SLT
+                                3'b011: alu_control = 5'b00110; // SLTU
                             endcase
                         end else if (funct7 == 7'b0100000) begin
                             case(funct3)
-                                3'b000: alu_control = 4'b0001; // SUB
-                                3'b101: alu_control = 4'b1001; // SRA
+                                3'b000: alu_control = 5'b00001; // SUB
+                                3'b101: alu_control = 5'b01001; // SRA
                             endcase
                         end
-
+                        else if (funct7 == 7'b0000001) begin
+                            case(funct3)
+                                3'b000: alu_control = 5'b01011; // MUL
+                                3'b001: alu_control = 5'b01100; // MULH
+                                3'b010: alu_control = 5'b01101; // MULHSU
+                                3'b011: alu_control = 5'b01110; // MULHU
+                                3'b100: alu_control = 5'b01111; // DIV
+                                3'b101: alu_control = 5'b10000; // DIVU
+                                3'b110: alu_control = 5'b10001; // REM
+                                3'b111: alu_control = 5'b10010; // REMU
+                            endcase
+                        end
                         next_state_flag = PC_UPDATE;
                     end
 
@@ -194,14 +205,14 @@ module control_unit (
                         op2 = immediate;
 
                         case(funct3)
-                            3'b000: alu_control = 4'b0000; // ADDI
-                            3'b100: alu_control = 4'b0100; // XORI
-                            3'b110: alu_control = 4'b0011; // ORI
-                            3'b111: alu_control = 4'b0010; // ANDI
-                            3'b001: if(imm1 == 7'b0000000) begin alu_control = 4'b0111; end
-                            3'b101: if(imm1 == 7'b0000000) begin alu_control = 4'b1000; end else if (imm1 == 7'b0100000) begin alu_control = 4'b1001; end
-                            3'b010: alu_control = 4'b0101; // SLTI
-                            3'b011: alu_control = 4'b0110; // SLTIU
+                            3'b000: alu_control = 5'b00000; // ADDI
+                            3'b100: alu_control = 5'b00100; // XORI
+                            3'b110: alu_control = 5'b00011; // ORI
+                            3'b111: alu_control = 5'b00010; // ANDI
+                            3'b001: if(imm1 == 7'b0000000) begin alu_control = 5'b00111; end
+                            3'b101: if(imm1 == 7'b0000000) begin alu_control = 5'b01000; end else if (imm1 == 7'b0100000) begin alu_control = 5'b01001; end
+                            3'b010: alu_control = 5'b00101; // SLTI
+                            3'b011: alu_control = 5'b00110; // SLTIU
                         endcase
 
                         next_state_flag = PC_UPDATE;
@@ -211,7 +222,7 @@ module control_unit (
                         memory_funct3 = funct3;
                         pc_control = 4'b0000;
                         ir_control = 2'b00;
-                        alu_control = 4'b0000;
+                        alu_control = 5'b00000;
 
                         register_write_en = 1'b0;
                         memory_write_en = 1'b0;
@@ -228,7 +239,7 @@ module control_unit (
                         memory_funct3 = funct3;
                         pc_control = 4'b0000;
                         ir_control = 2'b00;
-                        alu_control = 4'b0000;
+                        alu_control = 5'b00000;
 
                         register_write_en = 1'b0;
                         memory_write_en = 1'b1;
@@ -252,7 +263,7 @@ module control_unit (
                             memory_funct3 = funct3;
                             pc_control = 4'b0110;
                             ir_control = 2'b10;
-                            alu_control = 4'b0000;
+                            alu_control = 5'b00000;
 
                             register_write_en = 1'b0;
                             memory_write_en = 1'b0;
@@ -268,7 +279,7 @@ module control_unit (
                             memory_funct3 = funct3;
                             pc_control = 4'b0000;
                             ir_control = 2'b00;
-                            alu_control = 4'b0000;
+                            alu_control = 5'b00000;
 
                             register_write_en = 1'b0;
                             memory_write_en = 1'b0;
@@ -287,7 +298,7 @@ module control_unit (
                         memory_funct3 = funct3;
                         pc_control = 4'b0110;
                         ir_control = 2'b00;
-                        alu_control = 4'b0000;
+                        alu_control = 5'b00000;
 
                         register_write_en = 1'b1;
                         memory_write_en = 1'b0;
@@ -305,7 +316,7 @@ module control_unit (
                         memory_funct3 = funct3;
                         pc_control = 4'b0101;
                         ir_control = 2'b00;
-                        alu_control = 4'b0000;
+                        alu_control = 5'b00000;
 
                         register_write_en = 1'b1;
                         memory_write_en = 1'b0;
@@ -323,7 +334,7 @@ module control_unit (
                         memory_funct3 = funct3;
                         pc_control = 4'b0000;
                         ir_control = 2'b00;
-                        alu_control = 4'b0000;
+                        alu_control = 5'b00000;
 
                         register_write_en = 1'b1;
                         memory_write_en = 1'b0;
@@ -341,7 +352,7 @@ module control_unit (
                         memory_funct3 = funct3;
                         pc_control = 4'b0000;
                         ir_control = 2'b00;
-                        alu_control = 4'b0000;
+                        alu_control = 5'b00000;
 
                         register_write_en = 1'b1;
                         memory_write_en = 1'b0;
@@ -361,7 +372,7 @@ module control_unit (
                 memory_funct3 = funct3;
                 pc_control = 4'b0000;
                 ir_control = 2'b00;
-                alu_control = 4'b0000;
+                alu_control = 5'b00000;
 
                 register_write_en = 1'b1;
                 memory_write_en = 1'b0;
