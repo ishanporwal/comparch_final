@@ -26,7 +26,7 @@ module testbench;
         .clk(clk)
     );
 
-    defparam testbench.dut.MEM.INIT_FILE = "test_files/datapath_test.txt";
+    defparam testbench.dut.MEM.INIT_FILE = "test_files/rv32m.txt";
 
     initial begin
         $dumpfile("processor.vcd");

@@ -1,6 +1,6 @@
 filename = top
 top_module = top
-pcf_file = ./common/iceBlinkPico.pcf
+pcf_file = ./pindefs/iceBlinkPico.pcf
 
 build:
 	yosys -p "synth_ice40 -top $(top_module) -json $(filename).json" $(filename).sv

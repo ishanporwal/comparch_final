@@ -61,7 +61,7 @@ module top (
     logic [31:0] op2, memory_read_address, register_file_write, memory_write_address, memory_write;
     logic register_write_en, memory_write_en;
     logic [3:0] pc_control;
-    logic [3:0] alu_control;
+    logic [4:0] alu_control;
     logic [1:0] ir_control;
     logic [2:0] memory_funct3;
     

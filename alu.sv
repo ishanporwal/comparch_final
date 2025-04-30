@@ -20,8 +20,12 @@ module alu(
 );
 
     logic [4:0] shamt;
+    logic signed [63:0] product_s;
+    logic [63:0] product_u;
+    
 
     assign shamt = operand_b[4:0];
+    
 
     always_comb begin
         case (alu_control)
@@ -39,50 +43,50 @@ module alu(
 
             // RV32M
             5'b01011: result = operand_a * operand_b;   // MUL
+
             5'b01100: begin                             // MULH
-                logic signed [63:0] product;
-                product = ($signed(operand_a) * $signed(operand_b));
-                result = product[63:32];
+                product_s = $signed(operand_a) * $signed(operand_b);
+                result = product_s >>> 32;
             end
+
             5'b01101: begin                             // MULHSU
-                logic signed [63:0] product;
-                product = ($signed(operand_a) * $unsigned(operand_b));
-                result = product[63:32];
+                product_s = $signed({{32{operand_a[31]}}, operand_a}) * {{32{1'b0}}, operand_b};
+                result = product_s >>> 32;
             end
+
             5'b01110: begin                             // MULHU
-                logic [63:0] product;
-                product = ($unsigned(operand_a) * $unsigned(operand_b));
-                result = product[63:32];
+                product_u = $unsigned(operand_a) * $unsigned(operand_b);
+                result = product_u >> 32;
             end
+
             5'b01111: begin                             // DIV
-                if operand_b == 32'd0 begin
+                if (operand_b == 32'd0) begin
                     result = -32'sd1;
-                end
-                else begin
+                end else begin
                     result = $signed(operand_a) / $signed(operand_b);
                 end 
             end
+
             5'b10000: begin                             // DIVU
-                if operand_b == 32'd0 begin
+                if (operand_b == 32'd0) begin
                     result = 32'hFFFFFFFF;
-                end
-                else begin
+                end else begin
                     result = $unsigned(operand_a) / $unsigned(operand_b);
                 end 
             end
+
             5'b10001: begin                             // REM
-                if operand_b == 32'd0 begin
+                if (operand_b == 32'd0) begin
                     result = operand_a;
-                end
-                else begin
+                end else begin
                     result = $signed(operand_a) % $signed(operand_b);
                 end 
             end
+
             5'b10010: begin                             // REMU
-                if operand_b == 32'd0 begin
+                if (operand_b == 32'd0) begin
                     result = operand_a;
-                end
-                else begin
+                end else begin
                     result = $unsigned(operand_a) % $unsigned(operand_b);
                 end 
             end
