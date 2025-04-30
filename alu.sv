@@ -15,7 +15,7 @@
 module alu(
     input logic [31:0] operand_a, // First operand
     input logic [31:0] operand_b, // Second operand
-    input logic [3:0] alu_control, // Control signal to determine operation to perform
+    input logic [4:0] alu_control, // Control signal to determine operation to perform
     output logic [31:0] result // Result
 );
 
@@ -25,17 +25,44 @@ module alu(
 
     always_comb begin
         case (alu_control)
-            4'b0000: result = operand_a + operand_b; // ADD
-            4'b0001: result = operand_a - operand_b; // SUB
-            4'b0010: result = operand_a & operand_b; // AND
-            4'b0011: result = operand_a | operand_b; // OR
-            4'b0100: result = operand_a ^ operand_b; // XOR
-            4'b0101: result = ($signed(operand_a) < $signed(operand_b)) ? 32'd1 : 32'd0; // SLT
-            4'b0110: result = (operand_a < operand_b) ? 32'd1 : 32'd0; // SLTU
-            4'b0111: result = operand_a << shamt; // SLL
-            4'b1000: result = operand_a >> shamt; // SRL
-            4'b1001: result = $signed(operand_a) >>> shamt; // SRA
-            4'b1010: result = (operand_a + operand_b) & 32'hFFFFFFFE; // JALR
+            5'b00000: result = operand_a + operand_b; // ADD
+            5'b00001: result = operand_a - operand_b; // SUB
+            5'b00010: result = operand_a & operand_b; // AND
+            5'b00011: result = operand_a | operand_b; // OR
+            5'b00100: result = operand_a ^ operand_b; // XOR
+            5'b00101: result = ($signed(operand_a) < $signed(operand_b)) ? 32'd1 : 32'd0; // SLT
+            5'b00110: result = (operand_a < operand_b) ? 32'd1 : 32'd0; // SLTU
+            5'b00111: result = operand_a << shamt; // SLL
+            5'b01000: result = operand_a >> shamt; // SRL
+            5'b01001: result = $signed(operand_a) >>> shamt; // SRA
+            5'b01010: result = (operand_a + operand_b) & 32'hFFFFFFFE; // JALR
+
+            // RV32M
+            5'b01011: result = operand_a * operand_b;   // MUL
+            5'b01100: begin                             // MULH
+                logic signed [63:0] product;
+                product = ($signed(operand_a) * $signed(operand_b));
+                result = product[63:32];
+            end
+            5'b01101: begin                             // MULHSU
+                logic signed [63:0] product;
+                product = ($signed(operand_a) * $unsigned(operand_b));
+                result = product[63:32];
+            end
+            5'b01101: begin                             // MULHU
+                logic [63:0] product;
+                product = ($unsigned(operand_a) * $unsigned(operand_b));
+                result = product[63:32];
+            end
+            5'b01111: begin                             // DIV
+                if operand_b != 32'b0 begin
+                    
+                end
+                
+            end
+            5'b10000: result = operand_a * operand_b;   // DIVU
+            5'b10001: result = operand_a * operand_b;   // REM
+            5'b10010: result = operand_a * operand_b;   // REMU
             default: result = 32'b0;  // Default case
         endcase
     end
