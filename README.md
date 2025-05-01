@@ -1,10 +1,10 @@
-# 32-bit RISC-V Processor (Miniproject 4)
+# 32-bit RISC-V Processor (Final Project)
 
 This project implements a multi-cycle, unpipelined 32-bit RISC-V processor using SystemVerilog and the OSS CAD Suite. It was developed as part of the Computer Architecture course at Olin College of Engineering (Spring 2025) by Ahan Trivedi, Ishan Porwal, Nividh Singh, and Ertug Umsur.
 
 ## Overview
 
-- **Instruction Set:** RV32I base integer instruction set (excluding system and atomic instructions)
+- **Instruction Set:** RV32I base integer instruction set (excluding system and atomic instructions) and RV32M standard extension 
 - **Architecture:** Multi-cycle, unpipelined processor with Von Neumann memory
 - **Target Platform:** iceBlinkPico FPGA board
 - **Verification:** Functional simulation using icarus verilog and GTKWave and execution of RISC-V programs
@@ -27,6 +27,7 @@ This project implements a multi-cycle, unpipelined 32-bit RISC-V processor using
 ├── test_1.txt              # First set of broad instructions
 ├── test_2.txt              # Second set of broad instructions
 ├── test_3.txt              # Instructions involving storing and loading with memory
+├── rv32m.txt               # Testing RV32M instructions
 └── README.md               # Project overiview
 ```
 
