@@ -28,7 +28,7 @@ This project implements a multi-cycle, unpipelined 32-bit RISC-V processor using
 ├── test_2.txt              # Second set of broad instructions
 ├── test_3.txt              # Instructions involving storing and loading with memory
 ├── rv32m.txt               # Testing RV32M instructions
-└── README.md               # Project overiview
+└── README.md               # Project overview
 ```
 
 ## How to Simulate
